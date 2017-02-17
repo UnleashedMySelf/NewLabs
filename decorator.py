@@ -1,10 +1,10 @@
-class foo(object):
+class Foo(object):
     def f1(self):
         print("original f1")
     def f2(self):
         print("original f2")
 
-class foo_decorator(object):
+class Foo_decorator(object):
     def __init__(self, decoratee):
         self._decoratee = decoratee
     def f1(self):
@@ -13,7 +13,7 @@ class foo_decorator(object):
     def __getattr__(self, name):
         return getattr(self._decoratee, name)
 
-u = foo()
-v = foo_decorator(u)
+u = Foo()
+v = Foo_decorator(u)
 v.f1()
 v.f2()
