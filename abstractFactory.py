@@ -1,43 +1,81 @@
-class Shop(object):
-    def __init__(self, item_factory = None):
-        self.item_factory=item_factory
+from abc import ABCMeta, abstractmethod
 
-    def get_item_description(self):
-        item=self.item_factory.get_item()
-        print("Item model ",self.item_factory.model())
-        print("Item name ",item.name())
-        print("Item color ",self.item_factory.color())
 
-class Jacket(object):
-    def name(self):
-        return "Jacket"
-    def __str__(self):
-        return "Jacket"
+class Beer(metaclass=ABCMeta):
+	pass
 
-class Gadget(object):
-    def name(self):
-        return "Apple"
-    def __str__(self):
-        return "Apple"
 
-class JacketFactory(object):
-    def get_item(self):
-        return Jacket()
-    def model(self):
-        return "Wrangler"
-    def color(self):
-        return "Dark blue"
+class Snack(metaclass=ABCMeta):
 
-class GadgetFactory(object):
-    def get_item(self):
-        return Gadget()
-    def model(self):
-        return "iPad Pro"
-    def color(self):
-        return "Space Gray"
+	@abstractmethod
+	def interact(self, beer: Beer) -> None:
+		pass
 
-shopJacket=Shop(JacketFactory())
-shopJacket.get_item_description()
-print("*"*30)
-shopGadget=Shop(GadgetFactory())
-shopGadget.get_item_description()
+
+class AbstractShop(metaclass=ABCMeta):
+
+	@abstractmethod
+	def buy_beer(self) -> Beer:
+		pass
+
+	@abstractmethod
+	def buy_snack(self) -> Snack:
+		pass
+
+
+class Tuborg(Beer):
+	pass
+
+
+class Staropramen(Beer):
+	pass
+
+
+class Peanuts(Snack):
+
+	def interact(self, beer: Beer) -> None:
+		print('Мы выпили по бутылке пива {} и закусили его арахисом'.format(
+			beer.__class__.__name__))
+
+
+class Chips(Snack):
+
+	def interact(self, beer: Beer) -> None:
+		print('Мы выпили несколько банок пива {} и съели пачку чипсов'.format(
+			beer.__class__.__name__))
+
+
+class ExpensiveShop(AbstractShop):
+
+	def buy_beer(self) -> Beer:
+		return Tuborg()
+
+	def buy_snack(self) -> Snack:
+		return Peanuts()
+
+
+class CheapShop(AbstractShop):
+
+	def buy_beer(self) -> Beer:
+		return Staropramen()
+
+	def buy_snack(self) -> Snack:
+		return Chips()
+
+
+if __name__ == '__main__':
+	expensive_shop = ExpensiveShop()
+	cheap_shop = CheapShop()
+	print('OUTPUT:')
+	beer = expensive_shop.buy_beer()
+	snack = cheep_shop.buy_snack()
+	snack.interact(beer)
+	beer = cheep_shop.buy_beer()
+	snack = expensive_shop.buy_snack()
+	snack.interact(beer)
+
+'''
+OUTPUT:
+Мы выпили несколько банок пива Tuborg и съели пачку чипсов
+Мы выпили по бутылке пива Staropramen и закусили его арахисом
+'''
