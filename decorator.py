@@ -1,19 +1,32 @@
-class Foo(object):
-    def f1(self):
-        print("original f1")
-    def f2(self):
-        print("original f2")
+from abc import ABCMeta, abstractmethod
 
-class Foo_decorator(object):
-    def __init__(self, decoratee):
-        self._decoratee = decoratee
-    def f1(self):
-        print("decorated f1")
-        self._decoratee.f1()
-    def __getattr__(self, name):
-        return getattr(self._decoratee, name)
+class IOperator(object):
+    """
+    Интерфейс, который должны реализовать как декоратор,
+    так и оборачиваемый объект.
+    """
+    __metaclass__ = ABCMeta
 
-u = Foo()
-v = Foo_decorator(u)
-v.f1()
-v.f2()
+    @abstractmethod
+    def operator(self):
+        pass
+
+
+class Component(IOperator):
+    """Компонент программы"""
+    def operator(self):
+        return 10.0
+
+
+class Wrapper(IOperator):
+    """Декоратор"""
+    def __init__(self, obj):
+        self.obj = obj
+
+    def operator(self):
+        return self.obj.operator() + 5.0
+
+
+comp = Component()
+comp = Wrapper(comp)
+print(comp.operator())
